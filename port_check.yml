@@ -34,7 +34,8 @@
 #        label: "Get data for {{ item }}"
         index_var: idx
       when: item.startswith('fscsi') and ansible_facts.devices[item].attributes.attach != 'switch'
-
+      failed_when: ansible_facts.devices[item].attributes.attach != 'switch'
+      ignore_errors: true
 
     - name: Check NIC connectivity
       shell:
@@ -55,7 +56,6 @@
         label: "Get results for {{ item.item }} "
       when: item.changed == true
 
-
     - name: Display disconnected NIC's only
       debug:
         msg:
@@ -64,3 +64,5 @@
       loop_control:
         label: "Get results for {{ item.item }} "
       when: item.changed == true and "Down" in item.stdout
+      failed_when: item.changed == true and "Down" in item.stdout
+      ignore_errors: true
