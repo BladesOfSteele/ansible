@@ -46,7 +46,7 @@
         index_var: idx
       when: item.startswith('ent')
 
-    - name: Display link status
+    - name: Display all NIC link status
       debug:
         msg:
           Connection state: "{{ item.item }} is showing a state of {{ item.stdout }}"
@@ -54,3 +54,13 @@
       loop_control:
         label: "Get results for {{ item.item }} "
       when: item.changed == true
+
+
+    - name: Display disconnected NIC's only
+      debug:
+        msg:
+          Connection state: "{{ item.item }} is showing a state of {{ item.stdout }}"
+      loop: "{{ results.results }}"
+      loop_control:
+        label: "Get results for {{ item.item }} "
+      when: item.changed == true and "Down" in item.stdout
