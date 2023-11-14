@@ -1,0 +1,91 @@
+---
+- name: Test FC HBA and report if it is not connected
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Get devices information
+      ansible.builtin.setup:
+        gather_subset:
+          - devices
+
+    - name: Get fscsi devices
+      ansible.builtin.set_fact:
+        fscsi_dev: "{{ ansible_facts.devices | ansible.builtin.dict2items | community.general.json_query(q) }}"
+      vars:
+        q: "[?contains(value.type, 'FC SCSI I/O Controller Protocol Device')].{ name: key, attach: value.attributes.attach, scsi_id: value.attributes.scsi_id }"
+
+    - name: Get parents for fscsi devices
+      ansible.builtin.command:
+        cmd: "lsdev -l {{ item.name }} -F parent"
+      register: parent_output
+      loop: "{{ fscsi_dev }}"
+      loop_control:
+        label: "Getting parent device of {{ item.name }}"
+      changed_when: false
+
+    - name: Joining information
+      ansible.builtin.set_fact:
+        fscsi: "{{ fscsi | default([]) + [{ 'name': item.name, 'attach': item.attach, 'scsi_id': item.scsi_id, 'parent': parent_output.results[idx].stdout }] }}"
+      loop: "{{ fscsi_dev }}"
+      loop_control:
+        label: "Adding parent device to {{ item.name }}"
+        index_var: idx
+
+#     - name: Display fcs devices
+#      debug:
+#        var: fscsi
+
+    - name: Removing devices if scsi_id is undefined or attach is not switch
+      ansible.builtin.command:
+        cmd: "rmdev -Rl {{ item.parent }}"
+      loop: "{{ fscsi }}"
+      loop_control:
+        label: "Removing {{ item.parent }}"
+      when: item.attach != 'switch' or item.scsi_id == ''
+
+    - name: Recreating removed devices
+      ansible.builtin.command:
+        cmd: "cfgmgr -l {{ item.parent }}"
+      loop: "{{ fscsi }}"
+      loop_control:
+        label: "Recreating {{ item.parent }}"
+      when: item.attach != 'switch' or item.scsi_id == ''
+
+    - name: Re-gather devices information
+      ansible.builtin.setup:
+        gather_subset:
+          - devices
+
+    - name: Re-get fscsi devices
+      ansible.builtin.set_fact:
+        fscsi_dev: "{{ ansible_facts.devices | ansible.builtin.dict2items | community.general.json_query(q) }}"
+      vars:
+        q: "[?contains(value.type, 'FC SCSI I/O Controller Protocol Device')].{ name: key, attach: value.attributes.attach, scsi_id: value.attributes.scsi_id }"
+
+    - name: Fail if there are still devices without connection
+      ansible.builtin.debug:
+        msg: "The device {{ item.name }} has wrong value for attach ({{ item.attach }}) or scsi_id ({{ item.scsi_id }})"
+      loop: "{{ fscsi_dev }}"
+      loop_control:
+        label: "Checking {{ item.name }}"
+      when: item.attach != 'switch' or item.scsi_id == ''
+
+    - name: Gather location
+      ansible.builtin.command:
+        cmd: "lscfg -vl {{ item.name }}"
+      register: location
+      loop: "{{ fscsi_dev }}"
+      loop_control:
+        label: "Checking {{ item.name }}"
+      when: item.attach != 'switch' or item.scsi_id == ''
+
+    - name: Show locations
+      ansible.builtin.debug:
+        msg:
+          Location code for disonnected port(s):  "{{ location.results[idx].stdout }}"
+      loop: "{{ location.results }}"
+      loop_control:
+        label: "Capturing location code for {{ item.item.name }} "
+        index_var: idx
+      when: item.changed == true
