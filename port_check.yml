@@ -10,7 +10,7 @@
           - devices
 
 #    - name: Display devices
-#      debug:
+#      debug: 
 #        var: ansible_facts.devices.fscsi0
 #        msg:
 #          - "{{ ansible_facts }}"
