@@ -6,10 +6,28 @@
     tasks:
       - name: increase file systems
         community.general.aix_filesystem:
-          filesystem: {{ item }}
+          filesystem: "{{ item }}"
           size: 20G
           state: present
-        loop: "{{ /tmp /opt /var }}"
+        loop:
+          - /tmp
+          - /var
+          - /opt
+
+      - name: copy resolv.conf
+        copy:
+          src: /etc/resolv.conf
+          dest: /etc/resolv.conf
+
+      - name: copy profile file
+        copy:
+          src: profile
+          dest: /.profile
+
+      - name: validate DNF file
+        stat:
+          path: "/opt/freeware/bin/dnf"
+        register: dnf_file
 
       - name: copy dnf script
         copy:
@@ -17,5 +35,28 @@
           dest: /tmp/dnf_aixtoolbox.sh
           owner: root
           group: system
-          mode: 0644
-   
+          mode: 0744
+        when: not dnf_file.stat.exists
+
+      - name: run install dnf script
+        shell:
+          cmd: "/tmp/dnf_aixtoolbox.sh -d"
+        when: not dnf_file.stat.exists
+
+#      - name: instally python3 via cmd
+#        shell:
+#          cmd: /opt/freeware/bin/dnf -y install python3-dnf
+
+      - name: install Python3 and other packages
+        ansible.builtin.dnf:
+          name:
+            - python3
+            - python3-dnf
+            - ansible
+
+      - name: Upgrade all packages
+        ansible.builtin.dnf:
+          name: "*"
+          state: latest
+
+# remove /etc/resolv.conf
