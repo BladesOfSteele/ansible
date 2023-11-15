@@ -39,7 +39,7 @@
 
     - name: Check NIC connectivity
       shell:
-        cmd: "entstat -d {{ item }} | egrep -i 'LAN state|Link Status'"
+        cmd: "entstat -d {{ item }} | egrep -i 'LAN state|Physical Port Link Status'"
       register: results
       loop: "{{ ansible_facts.devices.keys() }}"
       loop_control:
