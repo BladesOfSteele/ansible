@@ -12,11 +12,10 @@
         loop: "{{ /tmp /opt /var }}"
 
       - name: copy dnf script
-        - name: example copying file with owner and permissions
-          copy:
-            src: dnf_aixtoolbox.sh
-            dest: /tmp/dnf_aixtoolbox.sh
-            owner: root
-            group: system
-            mode: 0644
+        copy:
+          src: dnf_aixtoolbox.sh
+          dest: /tmp/dnf_aixtoolbox.sh
+          owner: root
+          group: system
+          mode: 0644
    
