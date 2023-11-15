@@ -1,0 +1,22 @@
+---
+  - name: Install dnf and all the necessary Ansibile files
+    hosts: aix
+    gather_facts: true
+
+    tasks:
+      - name: increase file systems
+        community.general.aix_filesystem:
+          filesystem: {{ item }}
+          size: 20G
+          state: present
+        loop: "{{ /tmp /opt /var }}"
+
+      - name: copy dnf script
+        - name: example copying file with owner and permissions
+          copy:
+            src: dnf_aixtoolbox.sh
+            dest: /tmp/dnf_aixtoolbox.sh
+            owner: root
+            group: system
+            mode: 0644
+   
