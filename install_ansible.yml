@@ -1,9 +1,18 @@
 ---
   - name: Install dnf and all the necessary Ansibile files
+    vars:
+    - ansible_python_interpreter: "{{ '/usr/bin/python3' }}"
     hosts: aix
-    gather_facts: true
+    gather_facts: false
 
     tasks:
+#      - name: set interpreter to native Python
+#        set_fact:
+#          ansible_python_interpreter = /usr/bin/python3
+
+      - name: gather facts
+        gather_facts:
+
       - name: increase file systems
         community.general.aix_filesystem:
           filesystem: "{{ item }}"
@@ -13,6 +22,13 @@
           - /tmp
           - /var
           - /opt
+
+      - name: increase paging space
+        community.general.aix_lvol:
+          vg: rootvg
+          lv: hd6
+          size: 3G
+          state: present
 
       - name: copy resolv.conf
         copy:
@@ -43,16 +59,30 @@
           cmd: "/tmp/dnf_aixtoolbox.sh -d"
         when: not dnf_file.stat.exists
 
+      - name: set interpreter to newly installed Python3
+        set_fact:
+          ansible_python_interpreter: /opt/freeware/bin/python3
+
+      - name: up data ulimit
+        shell:
+          cmd: ulimit -s 2097151
+
 #      - name: instally python3 via cmd
 #        shell:
 #          cmd: /opt/freeware/bin/dnf -y install python3-dnf
+
+#      - name: install Python3 and other packages
+#        ansible.builtin.dnf:
+#          name:
 
       - name: install Python3 and other packages
         ansible.builtin.dnf:
           name:
             - python3
-            - python3-dnf
             - ansible
+            - python3-dnf
+          state: latest
+          update_cache: true
 
       - name: Upgrade all packages
         ansible.builtin.dnf:
