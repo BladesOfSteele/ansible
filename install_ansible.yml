@@ -26,13 +26,6 @@
           - /var
           - /opt
 
-      - name: increase paging space
-        community.general.aix_lvol:
-          vg: rootvg
-          lv: hd6
-          size: 3G
-          state: present
-
       - name: copy resolv.conf
         copy:
           src: /etc/resolv.conf
