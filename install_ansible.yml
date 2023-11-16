@@ -89,4 +89,18 @@
           name: "*"
           state: latest
 
+      - name: Create ansible directory
+        ansible.builtin.file:
+          path: /ansible
+          state: directory
+
+      - name: Copy files
+        git:
+          repo: https://github.com/BladesOfSteele/ansible
+          dest: /ansible
+          update: yes
+          version: master
+
+
+          
 # remove /etc/resolv.conf
