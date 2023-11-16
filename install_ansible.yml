@@ -4,8 +4,9 @@
     - ansible_python_interpreter: "{{ '/usr/bin/python3' }}"
     hosts: aix
     gather_facts: false
+    # Need this to find git in the git module
     environment:
-      PATH: "/opt/freeware/bin:{{ ansible_env.PATH }}"
+      PATH: "/opt/freeware/bin:{{ (ansible_env|default({})).PATH|default('') }}"
 
     tasks:
 #      - name: set interpreter to native Python
