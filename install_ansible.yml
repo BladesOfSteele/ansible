@@ -4,6 +4,8 @@
     - ansible_python_interpreter: "{{ '/usr/bin/python3' }}"
     hosts: aix
     gather_facts: false
+    environment:
+      PATH: "/opt/freeware/bin:{{ ansible_env.PATH }}"
 
     tasks:
 #      - name: set interpreter to native Python
@@ -62,10 +64,6 @@
       - name: set interpreter to newly installed Python3
         set_fact:
           ansible_python_interpreter: /opt/freeware/bin/python3
-
-      - name: up data ulimit
-        shell:
-          cmd: ulimit -s 2097151
 
       - name: install python3 via cmd to get around memory error
         shell:
