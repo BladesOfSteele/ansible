@@ -6,7 +6,7 @@
     gather_facts: false
     # Need this to find git in the git module
     environment:
-      PATH: "/opt/freeware/bin:{{ (ansible_env|default({})).PATH|default('') }}"
+      PATH: "/opt/freeware/bin:/usr/bin:/etc:/usr/sbin:/usr/ucb:/usr/bin/X11:/sbin:/usr/java7_64/jre/bin:/usr/java7_64/bin"
 
     tasks:
 #      - name: set interpreter to native Python
