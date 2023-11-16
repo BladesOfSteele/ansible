@@ -65,9 +65,9 @@
         set_fact:
           ansible_python_interpreter: /opt/freeware/bin/python3
 
-      - name: install python3 via cmd to get around memory error
-        shell:
-          cmd: /opt/freeware/bin/dnf -y install python3
+#      - name: install python3 via cmd to get around memory error
+#        shell:
+#          cmd: /opt/freeware/bin/dnf -y install python3
 
       - name: install Python3 and other packages
         ansible.builtin.dnf:
