@@ -1,0 +1,28 @@
+---
+  - name: Prepare system for DNF and Ansible installation
+    vars:
+    - ansible_python_interpreter: "{{ '/usr/bin/python3' }}"
+    hosts: aix
+    gather_facts: true
+
+    tasks:
+      - name: increase file systems
+        community.general.aix_filesystem:
+          filesystem: "{{ item }}"
+          size: 20G
+          state: present
+        loop:
+          - /tmp
+          - /var
+          - /opt
+
+      - name: copy resolv.conf
+        copy:
+          src: /etc/resolv.conf
+          dest: /etc/resolv.conf
+
+      - name: copy profile file
+        copy:
+          src: profile
+          dest: /.profile
+
