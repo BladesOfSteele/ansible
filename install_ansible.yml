@@ -21,25 +21,26 @@
       - name: gather facts
         gather_facts:
 
-      - name: increase file systems
-        community.general.aix_filesystem:
-          filesystem: "{{ item }}"
-          size: 20G
-          state: present
-        loop:
-          - /tmp
-          - /var
-          - /opt
-
-      - name: copy resolv.conf
-        copy:
-          src: /etc/resolv.conf
-          dest: /etc/resolv.conf
-
-      - name: copy profile file
-        copy:
-          src: profile
-          dest: /.profile
+#  moved to prep_system.yml, since it's required for role
+#      - name: increase file systems
+#        community.general.aix_filesystem:
+#          filesystem: "{{ item }}"
+#          size: 20G
+#          state: present
+#        loop:
+#          - /tmp
+#          - /var
+#          - /opt
+#
+#      - name: copy resolv.conf
+#        copy:
+#          src: /etc/resolv.conf
+#          dest: /etc/resolv.conf
+#
+#      - name: copy profile file
+#        copy:
+#          src: profile
+#          dest: /.profile
 
 #      - name: validate DNF file
 #        stat:
