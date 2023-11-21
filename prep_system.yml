@@ -26,3 +26,17 @@
           src: profile
           dest: /.profile
 
+      - name: copy UTF LPP files
+        copy:
+          src: "{{ item }}"
+          dest: /tmp/
+        with_fileglob: /home/root/ansible/bos.loc*
+
+      - name: install UTF files
+        installp:
+          name: "{{ item }}"
+          repository_path: /tmp
+          accept_license: yes
+        loop:
+          - bos.loc.com.utf
+          - bos.loc.utf.EN_US

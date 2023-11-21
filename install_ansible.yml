@@ -6,8 +6,8 @@
     hosts: aix
     gather_facts: false
     # Need this to find git in the git module
-#    environment:
-#      PATH: "/opt/freeware/bin:/usr/bin:/etc:/usr/sbin:/usr/ucb:/usr/bin/X11:/sbin:/usr/java7_64/jre/bin:/usr/java7_64/bin"
+    environment:
+      PATH: "/opt/freeware/bin:/usr/bin:/etc:/usr/sbin:/usr/ucb:/usr/bin/X11:/sbin:/usr/java7_64/jre/bin:/usr/java7_64/bin"
     collections:
       - ibm.power_aix
     roles:
@@ -62,9 +62,9 @@
 #        when: not dnf_file.stat.exists
 
 
-#      - name: set interpreter to newly installed Python3
-#        set_fact:
-#          ansible_python_interpreter: /opt/freeware/bin/python3
+      - name: set interpreter to newly installed Python3
+        set_fact:
+          ansible_python_interpreter: /opt/freeware/bin/python3
 
 #      - name: install python3 via cmd to get around memory error
 #        shell:
