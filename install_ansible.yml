@@ -2,11 +2,16 @@
   - name: Install dnf and all the necessary Ansibile files
     vars:
     - ansible_python_interpreter: "{{ '/usr/bin/python3' }}"
+    - pkgtype: dnf
     hosts: aix
     gather_facts: false
     # Need this to find git in the git module
     environment:
       PATH: "/opt/freeware/bin:/usr/bin:/etc:/usr/sbin:/usr/ucb:/usr/bin/X11:/sbin:/usr/java7_64/jre/bin:/usr/java7_64/bin"
+    collections:
+      - ibm.power_aix
+    roles:
+      - power_aix_bootstrap
 
     tasks:
 #      - name: set interpreter to native Python
@@ -36,24 +41,25 @@
           src: profile
           dest: /.profile
 
-      - name: validate DNF file
-        stat:
-          path: "/opt/freeware/bin/dnf"
-        register: dnf_file
+#      - name: validate DNF file
+#        stat:
+#          path: "/opt/freeware/bin/dnf"
+#        register: dnf_file
+#
+#      - name: copy dnf script
+#        copy:
+#          src: dnf_aixtoolbox.sh
+#          dest: /tmp/dnf_aixtoolbox.sh
+#          owner: root
+#          group: system
+#          mode: 0744
+#        when: not dnf_file.stat.exists
+#
+#      - name: run install dnf script
+#        shell:
+#          cmd: "/tmp/dnf_aixtoolbox.sh -d"
+#        when: not dnf_file.stat.exists
 
-      - name: copy dnf script
-        copy:
-          src: dnf_aixtoolbox.sh
-          dest: /tmp/dnf_aixtoolbox.sh
-          owner: root
-          group: system
-          mode: 0744
-        when: not dnf_file.stat.exists
-
-      - name: run install dnf script
-        shell:
-          cmd: "/tmp/dnf_aixtoolbox.sh -d"
-        when: not dnf_file.stat.exists
 
       - name: set interpreter to newly installed Python3
         set_fact:
