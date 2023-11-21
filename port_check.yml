@@ -1,6 +1,6 @@
 ---
 - name: Validate all ports are connected
-  hosts: aix
+  hosts: validate
   gather_facts: false
 
   tasks:
