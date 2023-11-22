@@ -1,11 +1,11 @@
----
-  - name: Prepare system for DNF and Ansible installation
-    vars:
-    - ansible_python_interpreter: "{{ '/usr/bin/python3' }}"
-    hosts: aix
-    gather_facts: true
-
-    tasks:
+#---
+#  - name: Prepare system for DNF and Ansible installation
+#    vars:
+#    - ansible_python_interpreter: "{{ '/usr/bin/python3' }}"
+#    hosts: aix
+#    gather_facts: true
+#
+#    tasks:
       - name: increase file systems
         community.general.aix_filesystem:
           filesystem: "{{ item }}"
@@ -32,11 +32,32 @@
           dest: /tmp/
         with_fileglob: /home/root/ansible/bos.loc*
 
+# Loop fails with "all of the following are missing: device, install_list"
       - name: install UTF files
-        installp:
+        community.general.installp:
           name: "{{ item }}"
           repository_path: /tmp
           accept_license: yes
         loop:
           - bos.loc.com.utf
           - bos.loc.utf.EN_US
+
+#      - name: install bos.loc.com.utf
+#        installp:
+#          name: bos.loc.com.utf
+#          repository_path: /tmp
+#          accept_license: yes
+#
+#      - name: install bos.loc.utf.EN_US
+#        installp:
+#          name: bos.loc.utf.EN_US
+#          repository_path: /tmp
+#          accept_license: yes
+
+      - name: create ssh key
+        community.crypto.openssh_keypair:
+          path: /.ssh/id_rsa
+
+      - name: allow ssh to localhost
+        shell: cat /.ssh/id_rsa.pub >> /.ssh/authorized_keys
+

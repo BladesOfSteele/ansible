@@ -9,3 +9,6 @@ export LANG=en_US.UTF-8
 # Include opensource stuff in the path
 export PATH=$PATH:/opt/freeware/bin
 
+# Make ksh easier to use
+set -o vi
+

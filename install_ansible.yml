@@ -1,15 +1,21 @@
 ---
   - name: Install dnf and all the necessary Ansibile files
     vars:
-#    - ansible_python_interpreter: "{{ '/usr/bin/python3' }}"
+    - ansible_python_interpreter: "{{ '/usr/bin/python3' }}"
     - pkgtype: dnf
     hosts: aix
     gather_facts: false
-    # Need this to find git in the git module
+    # Need this to find the git executable in the git module, LANG is an AIX requirement.
     environment:
       PATH: "/opt/freeware/bin:/usr/bin:/etc:/usr/sbin:/usr/ucb:/usr/bin/X11:/sbin:/usr/java7_64/jre/bin:/usr/java7_64/bin"
+      LANG: "en_US.UTF-8"
     collections:
       - ibm.power_aix
+
+    pre_tasks:
+      - name: Run prep system playbook first"
+        include_tasks: 'prep_system.yml'
+
     roles:
       - power_aix_bootstrap
 
@@ -77,7 +83,8 @@
             - ansible
             - python3-dnf
             - git
-          state: latest
+            - python3-jmespath
+          state: present
           update_cache: true
 
       - name: Upgrade all packages
@@ -90,7 +97,7 @@
           path: /ansible
           state: directory
 
-      - name: Copy files
+      - name: Pull Ansible playbooks from GIT
         git:
           repo: https://github.com/BladesOfSteele/ansible
           dest: /ansible
