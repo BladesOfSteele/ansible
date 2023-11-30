@@ -1,0 +1,28 @@
+---
+  - name: Test Playbook
+    vars:
+ #   - ansible_python_interpreter: "{{ '/usr/bin/python3' }}"
+    - TEMP:  '/optxxx/freeware/bin:'
+    - X: 'one/two/three'
+    - Y: "{{ ansible_env.PATH }}"
+
+    hosts: test
+    gather_facts: true
+    environment:
+#      PATH: "/opt/freeware/bin:/usr/bin:/etc:/usr/sbin:/usr/ucb:/usr/bin/X11:/sbin:/usr/java7_64/jre/bin:/usr/java7_64/bin"
+#      PATH: "{{ ansible_env.PATH.join((  TEMP  )) }}"
+      PATH:  "{{ TEMP }}{{ Y }}"
+#      PATH: /opt/freeware/bin:{{ ansible_env.PATH }}
+#      PATH: "{{ TEMP | replace('\n','') }} >  {{ ansible_env.PATH | replace('\n','') }} > {{ TEMP | replace('\n','') }}"
+
+    tasks:
+      - name: debug
+        debug:
+          var=ansible_env
+
+      - name: Y
+        debug:
+          var=Y
+
+          
+# remove /etc/resolv.conf
