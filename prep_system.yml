@@ -6,6 +6,11 @@
 #    gather_facts: true
 #
 #    tasks:
+
+      - name: set interpreter to native Python
+        set_fact:
+          ansible_python_interpreter = /usr/bin/python3
+
       - name: increase file systems
         community.general.aix_filesystem:
           filesystem: "{{ item }}"

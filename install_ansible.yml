@@ -104,6 +104,8 @@
           update: yes
           version: master
 
-
-          
 # remove /etc/resolv.conf
+      - name: remove /etc/resolv.conf
+        file:
+          path: /etc/resolv.conf
+          state: absent
