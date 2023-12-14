@@ -1,0 +1,44 @@
+---
+  - name: Run Kaiser scripts and capture output
+    hosts: aix
+    gather_facts: false
+    # Need this to find the git executable in the git module, LANG is an AIX requirement.
+    tasks:
+      - name: Get a list of scripts (*s.sh)
+        find:
+          paths:
+            - /ansible
+          patterns:
+            - "*s.sh"
+          file_type: file
+        register: scripts
+
+#      - name: display script names
+#        debug:
+#          var: scripts.files
+
+#      - name: list scripts
+#        debug:
+#          var: item.path
+#        with_items: "{{ scripts.files }}"
+
+      - name: run scripts
+        shell:
+          cmd: "cd /ansible ; {{ item.path }}"
+        with_items: "{{ scripts.files }}"
+
+      - name: Get a list of output files (*.out)
+        find:
+          paths:
+            - /ansible
+          patterns:
+            - "*.out"
+          file_type: file
+        register: output
+
+      - name: fetch files
+        fetch:
+          src: "{{ item.path }}"
+#          dest: "/export/provision/capture/kaiser/{{ inventory_hostname }}-{{ item.path }}"
+          dest: "/export/provision/capture/kaiser/{{ item.path }}"
+        with_items:  "{{ output.files }}"
