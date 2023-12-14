@@ -4,12 +4,12 @@
     gather_facts: false
     # Need this to find the git executable in the git module, LANG is an AIX requirement.
     tasks:
-      - name: Get a list of scripts (*s.sh)
+      - name: Get a list of scripts (*.sh)
         find:
           paths:
             - /ansible
           patterns:
-            - "*s.sh"
+            - "*.sh"
           file_type: file
         register: scripts
 
