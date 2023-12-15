@@ -92,6 +92,7 @@
         ansible.builtin.dnf:
           name: "*"
           state: latest
+          use_backend: dnf4
 
       - name: Create ansible directory
         ansible.builtin.file:
