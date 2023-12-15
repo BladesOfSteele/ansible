@@ -3,7 +3,7 @@
     vars:
     - ansible_python_interpreter: "{{ '/usr/bin/python3' }}"
     - pkgtype: dnf
-    hosts: aix
+    hosts: all
     gather_facts: false
     # Need this to find the git executable in the git module, LANG is an AIX requirement.
     environment:
