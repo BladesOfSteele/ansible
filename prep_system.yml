@@ -35,7 +35,8 @@
         copy:
           src: "{{ item }}"
           dest: /tmp/
-        with_fileglob: /home/root/ansible/bos.loc*
+#        with_fileglob: /home/root/ansible/bos.loc*
+        with_fileglob: bos.loc*
 
 # Loop fails with "all of the following are missing: device, install_list"
       - name: install UTF files
