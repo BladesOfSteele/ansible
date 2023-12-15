@@ -86,6 +86,7 @@
             - python3-jmespath
           state: present
           update_cache: true
+          use_backen: dnf4
 
       - name: Upgrade all packages
         ansible.builtin.dnf:
