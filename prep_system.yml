@@ -23,7 +23,7 @@
 
       - name: copy resolv.conf
         copy:
-          src: /etc/resolv.conf
+          src: resolv.conf
           dest: /etc/resolv.conf
 
       - name: copy profile file
